@@ -9,6 +9,11 @@ app.get('/chat', function(req, res){
 	res.sendFile(__dirname + '/chat.html');
 });
 
+app.get('/audio', function(req, res){
+	//res.send('<h1>Hello world</h1');  // just sends text to the browser
+	res.sendFile(__dirname + '/audio.html');
+});
+
 io.on('connection', function(socket){
 	console.log('a user connected');
 	
@@ -20,6 +25,12 @@ io.on('connection', function(socket){
 		console.log('message ' + msg);
 		io.emit('chat message', msg);
 	});
+
+	socket.on('coords acquired', function(msg){
+		console.log('new user located at: ' + msg.lat + ',' + msg.lng);
+		io.emit('coords acquired', msg);
+	});
+
 });
 
 

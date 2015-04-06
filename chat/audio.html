@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+
+    </style>
+
+        <style>
+      body
+      {
+        max-width: 500px;
+        margin: 2em auto;
+        font-size: 20px;
+      }
+ 
+      h1
+      {
+        text-align: center;
+      }
+          
+      .buttons-wrapper
+      {
+        text-align: center;
+      }
+ 
+      .hidden
+      {
+        display: none;
+      }
+ 
+      #video
+      {
+        display: block;
+        width: 100%;
+      }
+ 
+      .button-demo
+      {
+        padding: 0.5em;
+        display: inline-block;
+        margin: 1em auto;
+      }
+ 
+      .author
+      {
+        display: block;
+        margin-top: 1em;
+      }
+    </style>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+
+  </head>
+  <body>
+  <!--
+    <ul id="messages"></ul>
+    <form action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+  -->
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <!--<script src="/socket.io/socket.io.js"></script>-->
+
+    <h1>getUserMedia API</h1>
+    <video id="video" autoplay="autoplay" controls="true"></video>
+    <div class="buttons-wrapper">
+      <button id="button-play-gum" class="button-demo" href="#">Play demo</button>
+      <button id="button-stop-gum" class="button-demo" href="#">Stop demo</button>
+    </div>
+    <span id="gum-unsupported" class="hidden">API not supported</span>
+    <span id="gum-partially-supported" class="hidden">API partially supported (video only)</span>
+    <script>
+      var videoStream = null;
+      var video = document.getElementById("video");
+ 
+      // Test browser support
+      window.navigator = window.navigator || {};
+      navigator.getUserMedia = navigator.getUserMedia       ||
+                               navigator.webkitGetUserMedia ||
+                               navigator.mozGetUserMedia    ||
+                               null;
+ 
+      if (navigator.getUserMedia === null) {
+        document.getElementById('gum-unsupported').classList.remove('hidden');
+        document.getElementById('button-play-gum').setAttribute('disabled', 'disabled');
+        document.getElementById('button-stop-gum').setAttribute('disabled', 'disabled');
+      } else {
+        // Opera <= 12.16 accepts the direct stream.
+        // More on this here: http://dev.opera.com/articles/view/playing-with-html5-video-and-getusermedia-support/
+        var createSrc = window.URL ? window.URL.createObjectURL : function(stream) {return stream;};
+ 
+        // Opera <= 12.16 support video only.
+        var audioContext = window.AudioContext       ||
+                           window.webkitAudioContext ||
+                           null;
+        if (audioContext === null) {
+          document.getElementById('gum-partially-supported').classList.remove('hidden');
+        }
+ 
+        document.getElementById('button-play-gum').addEventListener('click', function() {
+          // Capture user's audio and video source
+          navigator.getUserMedia({
+            video: true,
+            audio: true
+          },
+          function(stream) {
+            videoStream = stream;
+            // Stream the data
+            video.src = createSrc(stream);
+            video.play();
+          },
+          function(error) {
+            console.log("Video capture error: ", error.code);
+          });
+        });
+        document.getElementById('button-stop-gum').addEventListener('click', function() {
+          // Pause the video
+          video.pause();
+          // Stop the stream
+          videoStream.stop();
+        });
+      }
+    </script>
+
+
+  </body>
+</html>

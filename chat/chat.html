@@ -3,7 +3,7 @@
   <head>
     <title>Socket.IO chat</title>
     <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
+       { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
       form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
       form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
@@ -22,6 +22,34 @@
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <!--<script src="/socket.io/socket.io.js"></script>-->
     <script>
+    var my_location = {};
+    function error(err) {
+      console.warn('ERROR(' + err.code + '): ' + err.message);
+    };
+
+    var options = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0
+    };
+    
+    $(function(){
+      if ("geolocation" in navigator) {
+        /* geolocation is available */
+        console.log("ready for locate");
+        navigator.geolocation.getCurrentPosition(function(position) {
+
+          send_coords_to_server(position.coords.latitude, position.coords.longitude);
+          socket.emit('coords acquired', my_location);
+          //
+
+        }, error, options);
+      } else {
+        /* geolocation IS NOT available */
+        console.log("no geolocation");
+      }
+    });
+
       var socket = io();
       $('form').submit(function(){
         socket.emit('chat message', $('#m').val());
@@ -29,9 +57,32 @@
         return false;
       });
 
+/*
+      $("#m").keyup(
+          function(){
+            socket.emit('chat message', $('#m').val());
+            $('#m').val('');
+            return false;
+        });
+*/
+
+      // on reciept of 'chat message' do this:
       socket.on('chat message', function(msg){
         $('#messages').append($('<li>').text(msg));
       })
+
+      // on receipt of a 'coords acquired' do this:
+      socket.on('coords acquired', function(msg){
+        $('#messages').append($('<li>').text("New user at " + msg.lat + "," + msg.lng));
+      })
+
+      var send_coords_to_server = function(lat, lng){
+        console.log("sending coords to server via socket: " + lat + "," + lng);
+        my_location.lat = lat;
+        my_location.lng = lng;
+        console.log(my_location);
+      }
+
     </script>
   </body>
 </html>
