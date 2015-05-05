@@ -9,6 +9,10 @@ app.get('/chat', function(req, res){
 	res.sendFile(__dirname + '/chat.html');
 });
 
+app.get('/', function(req,res){
+	res.send('ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDrSlCQulItSD3mF6yrh0dY5KSzuAnD4GUb/f+t7oV7e66MbWqmwCMc5dPfm/uV+DIiKXu8WXYlSt1wczN3QYmw1AG5ALYGih1X9aDuyjak5o4lhSO9NOCaBIj9+769E7Vx1wkRdlQa6L4LC/IiyFYkpvLnBy+5GOeA935Uod0q9TjpBq/nk8qtx+1ulaj+M+OLwGjZVNZEm5xGgSQ+80yQ+lAg9DvYcmVk7DRxVqvnMvBZPYSFIHrW11xsNBFmZMaRP26jVeqyXyPCLJsgHHL2EofIUEjlMpG4GmCMhrgtzfo2lAx0AMHo1nlmlZULXyxMh8J5cpDL5j186hTUxd0h ncfausti@gmail.com');
+});
+
 app.get('/audio', function(req, res){
 	//res.send('<h1>Hello world</h1');  // just sends text to the browser
 	res.sendFile(__dirname + '/audio.html');
